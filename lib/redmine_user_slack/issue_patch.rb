@@ -17,13 +17,13 @@ module RedmineUserSlack
 		module InstanceMethods
 			def create_from_issue
 				@create_already_fired = true
-				Redmine::Hook.call_hook(:redmine_slack_issues_new_after_save, { :issue => self})
+				Redmine::Hook.call_hook(:redmine_user_slack_issues_new_after_save, { :issue => self})
 				return true
 			end
 
 			def save_from_issue
 				if not @create_already_fired
-					Redmine::Hook.call_hook(:redmine_slack_issues_edit_after_save, { :issue => self, :journal => self.current_journal}) unless self.current_journal.nil?
+					Redmine::Hook.call_hook(:redmine_user_slack_issues_edit_after_save, { :issue => self, :journal => self.current_journal}) unless self.current_journal.nil?
 				end
 				return true
 			end

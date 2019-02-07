@@ -45,7 +45,6 @@ class SlackListener < Redmine::Hook::Listener
 	end
 
 	def redmine_user_slack_issues_edit_after_save(context={})
-
 		issue = context[:issue]
 		journal = context[:journal]
 		ucf = UserCustomField.find_by_name("Slack")
