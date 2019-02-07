@@ -36,9 +36,9 @@ class SlackListener < Redmine::Hook::Listener
 
 	    users = issue.notified_users | issue.notified_watchers
 	    users.each do |user|
-    		channel = user.custom_value_for(ucf).value
+    		channel = user.custom_value_for(ucf).value if user.custom_value_for(ucf)
 		    if channel=~ %r{^[#@][a-z0-9_\-]+}i
-				Rails.logger.info "  SLACK: new notify: #{user.login}: #{channel}"
+				Rails.logger.info "  SLACK: new issue notify: #{user.login}: #{channel}"
 				speak msg, channel, attachment
 		    end
 	    end
@@ -64,9 +64,9 @@ class SlackListener < Redmine::Hook::Listener
     	  journal.notes? || journal.visible_details(user).any?
     	end
     	users.each do |user|
-    		channel = user.custom_value_for(ucf).value
+    		channel = user.custom_value_for(ucf).value if user.custom_value_for(ucf)
 		    if channel=~ %r{^[#@][a-z0-9_\-]+}i
-				Rails.logger.info "  SLACK: edit notify: #{user.login}: #{channel}"
+				Rails.logger.info "  SLACK: issue edit notify: #{user.login}: #{channel}"
 				speak msg, channel, attachment
 		    end
     	end

@@ -21,12 +21,14 @@ Redmine::Plugin.register :redmine_user_slack do
 		:partial => 'settings/slack_settings'
 end
 
-#ActionDispatch::Callbacks.to_prepare do
-ActiveSupport::Reloader.to_prepare do
+Rails.application.config.to_prepare do
 	require_dependency 'issue'
 	unless Issue.included_modules.include? RedmineUserSlack::IssuePatch
 		Issue.send(:include, RedmineUserSlack::IssuePatch)
 	end
-	UserCustomField.create(:name => "Slack", :field_format => 'string', :regexp => "^[#@][a-zA-Z0-9_\-]+$") if UserCustomField.find_by_name("Slack").nil?
+	if UserCustomField.find_by_name("Slack").nil?
+		Rails.logger.info "Plugin redmine_user_slack: create UserCustomField Slack" if Rails.logger
+		UserCustomField.create(:name => "Slack", :field_format => 'string', :regexp => "^[#@][a-zA-Z0-9_\-]+$") if UserCustomField.find_by_name("Slack").nil?
+	end
 	Rails.logger.info "Plugin redmine_user_slack: INIT" if Rails.logger
 end
