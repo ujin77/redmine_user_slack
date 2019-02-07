@@ -9,3 +9,4 @@ en:
   redmine_user_slack_label_msg_cf1: Creating a 
   redmine_user_slack_label_msg_cf2: user custom field
   redmine_user_slack_label_msg_cf3: named "Slack" (without quotes).
+  redmine_user_slack_label_short_message: Short message

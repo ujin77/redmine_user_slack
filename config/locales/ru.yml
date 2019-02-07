@@ -9,3 +9,4 @@ ru:
   redmine_user_slack_label_msg_cf1: Создание
   redmine_user_slack_label_msg_cf2: пользовательского настраиваемого поля
   redmine_user_slack_label_msg_cf3: с именем «Slack» (без кавычек).
+  redmine_user_slack_label_short_message: Короткое сообщение

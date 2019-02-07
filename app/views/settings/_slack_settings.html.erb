@@ -21,5 +21,13 @@
 </p>
 
 <p>
+	<label for="settings_short_message"><%= l(:redmine_user_slack_label_short_message) %></label>
+	<select id="settings_short_message" value="<%= settings['short_message'] %>" name="settings[short_message]">
+		<option value="yes">Yes</option>
+		<option value="no" <%= settings['short_message'] != 'yes' ? %q(selected="selected") : '' %>>No</option>
+	</select>
+</p>
+
+<p>
 	<%= l(:redmine_user_slack_label_msg_cf1) %> <a href="/custom_fields/new?type=UserCustomField"><%= l(:redmine_user_slack_label_msg_cf2) %></a> <%= l(:redmine_user_slack_label_msg_cf3) %>
 </p>

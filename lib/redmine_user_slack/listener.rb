@@ -15,7 +15,11 @@ class SlackListener < Redmine::Hook::Listener
 		msg = "[<#{object_url issue.project}|#{escape issue.project}>] - #{escape msg_created}: <#{object_url issue}|#{escape issue}> (#{escape issue.author})"
 
 		attachment = {}
-		attachment[:text] = escape issue.description if issue.description
+		if Setting.plugin_redmine_user_slack['short_message'] == 'yes'
+			attachment[:text] = escape issue.description[0..200] if issue.description
+		else
+			attachment[:text] = escape issue.description if issue.description
+		end
 		attachment[:fields] = [{
 			:title => I18n.t("field_status"),
 			:value => escape(issue.status.to_s),
@@ -59,7 +63,11 @@ class SlackListener < Redmine::Hook::Listener
 
 		msg = "[<#{object_url issue.project}|#{escape issue.project}>] <#{object_url issue}|#{escape issue}> - #{escape msg_updated} (#{escape journal.user.to_s})"
 		attachment = {}
-		attachment[:text] = escape journal.notes if journal.notes
+		if Setting.plugin_redmine_user_slack['short_message'] == 'yes'
+			attachment[:text] = escape journal.notes[0..200] if journal.notes
+		else
+			attachment[:text] = escape journal.notes if journal.notes
+		end
 		attachment[:fields] = journal.details.map { |d| detail_to_field d }
 
         users  = journal.notified_users | journal.notified_watchers
