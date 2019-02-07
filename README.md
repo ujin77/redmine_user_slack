@@ -9,17 +9,14 @@ the underscore!):
 
     git clone https://github.com/ujin77/redmine_user_slack.git redmine_user_slack
 
-You will also need the `httpclient` dependency, which can be installed by running
+From your Redmine root directory:
 
     bundle install
 	bundle exec rake redmine:plugins:migrate NAME=redmine_user_slack RAILS_ENV=production
 	touch tmp/restart.txt
 
-from the plugin directory.
+In the Plugins page under the configuration options, set the Slack API URL to the URL for an Incoming WebHook integration in your Slack account.
 
-Restart Redmine, and you should see the plugin show up in the Plugins page.
-Under the configuration options, set the Slack API URL to the URL for an
-Incoming WebHook integration in your Slack account.
 
 ## Uninstall
 
