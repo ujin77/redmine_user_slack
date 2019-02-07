@@ -1,0 +1,4 @@
+# English strings go here for Rails i18n
+en:
+  message_created: Created a new task
+  message_updated: has been updated
