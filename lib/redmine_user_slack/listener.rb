@@ -12,7 +12,7 @@ class SlackListener < Redmine::Hook::Listener
 
 		msg_created = I18n.t("redmine_user_slack_message_created")
 
-		msg = "[<#{object_url issue.project}|#{escape issue.project}>] - #{escape msg_created}: <#{object_url issue}|#{escape issue}> (#{escape issue.author})"
+		msg = "<#{object_url issue.project}|#{escape issue.project}>\n#{escape msg_created}: <#{object_url issue}|#{escape issue}>"
 
 		attachment = {}
 		if Setting.plugin_redmine_user_slack['short_message'] == 'yes'
@@ -20,6 +20,18 @@ class SlackListener < Redmine::Hook::Listener
 		else
 			attachment[:text] = escape issue.description if issue.description
 		end
+		attachment[:color] = "#628db6"
+		attachment[:author_name] = escape(issue.author)
+		attachment[:actions] = [{
+			:type => "button",
+			:text => escape(issue.project),
+			:url => object_url(issue.project)	
+		} , {
+			:type => "button",
+			:text => escape(issue),
+			:url => object_url(issue)
+		}]
+
 		attachment[:fields] = [{
 			:title => I18n.t("field_status"),
 			:value => escape(issue.status.to_s),
@@ -59,15 +71,26 @@ class SlackListener < Redmine::Hook::Listener
 
 		return if ucf.nil?
 
-		msg_updated = I18n.t("redmine_user_slack_message_updated")
+		msg = "<#{object_url issue.project}|#{escape issue.project}>\n<#{object_url issue}|#{escape issue}>"
 
-		msg = "[<#{object_url issue.project}|#{escape issue.project}>] <#{object_url issue}|#{escape issue}> - #{escape msg_updated} (#{escape journal.user.to_s})"
 		attachment = {}
 		if Setting.plugin_redmine_user_slack['short_message'] == 'yes'
 			attachment[:text] = escape journal.notes[0..200] if journal.notes
 		else
 			attachment[:text] = escape journal.notes if journal.notes
 		end
+		attachment[:color] = "#9fcf9f"
+		attachment[:author_name] = escape(journal.user.to_s)
+		attachment[:actions] = [{
+			:type => "button",
+			:text => escape(issue.project),
+			:url => object_url(issue.project)	
+		} , {
+			:type => "button",
+			:text => escape(issue),
+			:url => object_url(issue)
+		}]
+		
 		attachment[:fields] = journal.details.map { |d| detail_to_field d }
 
         users  = journal.notified_users | journal.notified_watchers

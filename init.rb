@@ -8,7 +8,7 @@ Redmine::Plugin.register :redmine_user_slack do
 	url 'https://github.com/ujin77/redmine_user_slack'
 	author_url 'https://github.com/ujin77'
 	description 'Posts updates to issues in your Redmine to a Slack user'
-	version '0.1'
+	version '0.2'
 
 	requires_redmine :version_or_higher => '2.0.0'
 
