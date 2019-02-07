@@ -4,16 +4,16 @@
 </p>
 
 <p>
-	Generate an "Incoming WebHook" URL from the <a href="https://slack.com/apps/build/custom-integration">apps configuration page on Slack</a>.
+	<%= l(:redmine_user_slack_label_msg_url1) %> <a href="https://slack.com/apps/build/custom-integration"><%= l(:redmine_user_slack_label_msg_url2) %></a>.
 </p>
 
 <p>
-	<label for="settings_username">Slack Username</label>
+	<label for="settings_username"><%= l(:redmine_user_slack_label_user_name) %></label>
 	<input type="text" id="settings_username" value="<%= settings['username'] %>" name="settings[username]" />
 </p>
 
 <p>
-	<label for="settings_display_watchers">Display Watchers?</label>
+	<label for="settings_display_watchers"><%= l(:redmine_user_slack_label_display_watchers) %></label>
 	<select id="settings_display_watchers" value="<%= settings['display_watchers'] %>" name="settings[display_watchers]">
 		<option value="yes">Yes</option>
 		<option value="no" <%= settings['display_watchers'] != 'yes' ? %q(selected="selected") : '' %>>No</option>
@@ -21,10 +21,5 @@
 </p>
 
 <p>
-	<label for="settings_post_updates">Post Issue Updates?</label>
-	<input type="checkbox" id="settings_post_updates" value="1" name="settings[post_updates]" <%= settings['post_updates'] == '1' ? 'checked="checked"' : '' %> />
-</p>
-
-<p>
-	Creating a <a href="/custom_fields/new?type=UserCustomField">user custom field</a> named "Slack" (without quotes).
+	<%= l(:redmine_user_slack_label_msg_cf1) %> <a href="/custom_fields/new?type=UserCustomField"><%= l(:redmine_user_slack_label_msg_cf2) %></a> <%= l(:redmine_user_slack_label_msg_cf3) %>
 </p>

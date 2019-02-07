@@ -1,4 +1,11 @@
 # English strings go here for Rails i18n
 en:
-  message_created: Created a new task
-  message_updated: has been updated
+  redmine_user_slack_message_created: Created a new task
+  redmine_user_slack_message_updated: has been updated
+  redmine_user_slack_label_user_name: Slack Username
+  redmine_user_slack_label_display_watchers: Display Watchers?
+  redmine_user_slack_label_msg_url1: Generate an "Incoming WebHook" URL from the
+  redmine_user_slack_label_msg_url2: apps configuration page on Slack
+  redmine_user_slack_label_msg_cf1: Creating a 
+  redmine_user_slack_label_msg_cf2: user custom field
+  redmine_user_slack_label_msg_cf3: named "Slack" (without quotes).

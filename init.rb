@@ -16,7 +16,7 @@ Redmine::Plugin.register :redmine_user_slack do
 		:default => {
 			'callback_url' => 'http://slack.com/callback/',
 			'username' => 'Redmine',
-			'display_watchers' => 'no'
+			'display_watchers' => 'yes'
 		},
 		:partial => 'settings/slack_settings'
 end

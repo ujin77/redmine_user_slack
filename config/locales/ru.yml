@@ -1,4 +1,11 @@
 # encoding: utf-8
 ru:
-  message_created: Новая задача
-  message_updated: обновлена
+  redmine_user_slack_message_created: Новая задача
+  redmine_user_slack_message_updated: обновлена
+  redmine_user_slack_label_user_name: Пользователь Slack
+  redmine_user_slack_label_display_watchers: Отображать наблюдателей?
+  redmine_user_slack_label_msg_url1: Сгенерируйте "Incoming WebHook" URL со
+  redmine_user_slack_label_msg_url2: страницы конфигурации приложений в Slack
+  redmine_user_slack_label_msg_cf1: Создание
+  redmine_user_slack_label_msg_cf2: пользовательского настраиваемого поля
+  redmine_user_slack_label_msg_cf3: с именем «Slack» (без кавычек).

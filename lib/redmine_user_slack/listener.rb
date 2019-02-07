@@ -4,11 +4,13 @@ class SlackListener < Redmine::Hook::Listener
 	def redmine_user_slack_issues_new_after_save(context={})
 		issue = context[:issue]
 
+		Rails.logger.info "  SLACK: new issue notify"
+
 		ucf = UserCustomField.find_by_name("Slack")
 
 		return if ucf.nil?
 
-		msg_created = I18n.t("message_created")
+		msg_created = I18n.t("redmine_user_slack_message_created")
 
 		msg = "[<#{object_url issue.project}|#{escape issue.project}>] - #{escape msg_created}: <#{object_url issue}|#{escape issue}> (#{escape issue.author})"
 
@@ -47,12 +49,13 @@ class SlackListener < Redmine::Hook::Listener
 	def redmine_user_slack_issues_edit_after_save(context={})
 		issue = context[:issue]
 		journal = context[:journal]
+		Rails.logger.info "  SLACK: edit issue notify"
+
 		ucf = UserCustomField.find_by_name("Slack")
 
 		return if ucf.nil?
-		return unless Setting.plugin_redmine_user_slack['post_updates'] == '1'
 
-		msg_updated = I18n.t("message_updated")
+		msg_updated = I18n.t("redmine_user_slack_message_updated")
 
 		msg = "[<#{object_url issue.project}|#{escape issue.project}>] <#{object_url issue}|#{escape issue}> - #{escape msg_updated} (#{escape journal.user.to_s})"
 		attachment = {}
