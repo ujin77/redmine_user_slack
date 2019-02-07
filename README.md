@@ -1,4 +1,4 @@
-# Slack notification for issues plugin for Redmine
+# Slack notifications for issues plugin for Redmine
 
 This plugin posts updates to issues in your Redmine to a Slack user.
 
