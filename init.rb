@@ -12,8 +12,7 @@ Redmine::Plugin.register :redmine_user_slack do
 
 	requires_redmine :version_or_higher => '2.0.0'
 
-	settings \
-		:default => {
+	settings :default => {
 			'callback_url' => 'http://slack.com/callback/',
 			'username' => 'Redmine',
 			'display_watchers' => 'yes',
@@ -31,5 +30,5 @@ Rails.application.config.to_prepare do
 		Rails.logger.info "Plugin redmine_user_slack: create UserCustomField Slack" if Rails.logger
 		UserCustomField.create(:name => "Slack", :field_format => 'string', :regexp => "^[#@][a-zA-Z0-9_\-]+$") if UserCustomField.find_by_name("Slack").nil?
 	end
-	Rails.logger.info "Plugin redmine_user_slack: INIT" if Rails.logger
+	Rails.logger.info "SLACK: init" if Rails.logger
 end

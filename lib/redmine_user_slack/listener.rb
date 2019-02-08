@@ -3,35 +3,17 @@ require 'httpclient'
 class SlackListener < Redmine::Hook::Listener
 	def redmine_user_slack_issues_new_after_save(context={})
 		issue = context[:issue]
-
-		Rails.logger.info "  SLACK: new issue notify"
-
-		ucf = UserCustomField.find_by_name("Slack")
-
-		return if ucf.nil?
-
-		msg_created = I18n.t("redmine_user_slack_message_created")
-
-		msg = "<#{object_url issue.project}|#{escape issue.project}>\n#{escape msg_created}: <#{object_url issue}|#{escape issue}>"
-
+		Rails.logger.info "SLACK: issues_new_after_save"
 		attachment = {}
-		if Setting.plugin_redmine_user_slack['short_message'] == 'yes'
-			attachment[:text] = escape issue.description[0..200] if issue.description
-		else
-			attachment[:text] = escape issue.description if issue.description
-		end
+		attachment[:text] = truncate_text(escape issue.description) if issue.description
 		attachment[:color] = "#628db6"
 		attachment[:author_name] = escape(issue.author)
+		attachment[:footer] = escape(Setting.app_title)
 		attachment[:actions] = [{
-			:type => "button",
-			:text => escape(issue.project),
-			:url => object_url(issue.project)	
-		} , {
 			:type => "button",
 			:text => escape(issue),
 			:url => object_url(issue)
 		}]
-
 		attachment[:fields] = [{
 			:title => I18n.t("field_status"),
 			:value => escape(issue.status.to_s),
@@ -52,40 +34,22 @@ class SlackListener < Redmine::Hook::Listener
 			:short => true
 		} if Setting.plugin_redmine_user_slack['display_watchers'] == 'yes' and not issue.watcher_users.empty?
 
+		head_msg = I18n.t("redmine_user_slack_message_created")
+
 	    users = issue.notified_users | issue.notified_watchers
-	    users.each do |user|
-    		channel = user.custom_value_for(ucf).value if user.custom_value_for(ucf)
-		    if channel=~ %r{^[#@][a-z0-9_\-]+}i
-				Rails.logger.info "  SLACK: new issue notify: #{user.login}: #{channel}"
-				speak msg, channel, attachment
-		    end
-	    end
+    	send_message users, "#{escape head_msg}: <#{object_url issue}|#{escape issue}>", attachment if not users.empty?
 	end
 
 	def redmine_user_slack_issues_edit_after_save(context={})
 		issue = context[:issue]
 		journal = context[:journal]
-		Rails.logger.info "  SLACK: edit issue notify"
-
-		ucf = UserCustomField.find_by_name("Slack")
-
-		return if ucf.nil?
-
-		msg = "<#{object_url issue.project}|#{escape issue.project}>\n<#{object_url issue}|#{escape issue}>"
-
+		Rails.logger.info "SLACK: issues_edit_after_save"
 		attachment = {}
-		if Setting.plugin_redmine_user_slack['short_message'] == 'yes'
-			attachment[:text] = escape journal.notes[0..200] if journal.notes
-		else
-			attachment[:text] = escape journal.notes if journal.notes
-		end
+		attachment[:text] = truncate_text(escape journal.notes) if journal.notes
 		attachment[:color] = "#9fcf9f"
 		attachment[:author_name] = escape(journal.user.to_s)
+		attachment[:footer] = escape(Setting.app_title)
 		attachment[:actions] = [{
-			:type => "button",
-			:text => escape(issue.project),
-			:url => object_url(issue.project)	
-		} , {
 			:type => "button",
 			:text => escape(issue),
 			:url => object_url(issue)
@@ -93,34 +57,43 @@ class SlackListener < Redmine::Hook::Listener
 		
 		attachment[:fields] = journal.details.map { |d| detail_to_field d }
 
+		head_msg = I18n.t("redmine_user_slack_message_updated")
+
         users  = journal.notified_users | journal.notified_watchers
 	    users.select! do |user|
     	  journal.notes? || journal.visible_details(user).any?
     	end
+
+    	send_message users, "#{escape head_msg}: <#{object_url issue}|#{escape issue}>", attachment if not users.empty?
+	end
+
+private
+
+	def send_message(users, message, attachment=nil)
+		ucf = UserCustomField.find_by_name("Slack")
+		if ucf.nil?
+			Rails.logger.warn("SLACK: undefined UserCustomField (Slack)")
+			return
+		end
+
     	users.each do |user|
     		channel = user.custom_value_for(ucf).value if user.custom_value_for(ucf)
 		    if channel=~ %r{^[#@][a-z0-9_\-]+}i
-				Rails.logger.info "  SLACK: issue edit notify: #{user.login}: #{channel}"
-				speak msg, channel, attachment
+				Rails.logger.info "  SLACK: issue notify: #{user.login}: #{channel}"
+				send_msg channel, message, attachment
 		    end
     	end
 	end
 
-	def speak(msg, channel, attachment=nil)
+	def send_msg(channel, message, attachment=nil)
 		url = Setting.plugin_redmine_user_slack['slack_url']
 		username = Setting.plugin_redmine_user_slack['username']
 
-		params = {
-			:text => msg,
-			:link_names => 1,
-		}
-
+		params = { :text => message }
 		params[:username] = username if username
 		params[:channel] = channel if channel
 		params[:attachments] = [attachment] if attachment
-
 		# Rails.logger.info params.to_json
-
 		begin
 			client = HTTPClient.new
 			client.ssl_config.cert_store.set_default_paths
@@ -132,7 +105,11 @@ class SlackListener < Redmine::Hook::Listener
 		end
 	end
 
-private
+	def truncate_text(text_message)
+		return text_message[0..201] if Setting.plugin_redmine_user_slack['short_message'] == 'yes' 
+		return text_message
+	end
+
 	def escape(msg)
 		msg.to_s.gsub("&", "&amp;").gsub("<", "&lt;").gsub(">", "&gt;")
 	end
